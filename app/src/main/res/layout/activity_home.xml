@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.tanim.smsmania.ui.HomeActivity"
+    android:orientation="vertical">
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
+        android:imeOptions="actionSend|flagNoEnterAction"
+        android:background="@drawable/rounded_edit_text"
+        android:layout_margin="8dp"
+        android:hint="Write Message"
+        android:gravity="left|top"
+        android:padding="8dp"
+        android:textAlignment="gravity"/>
+    <!--<Button
+        android:id="@+id/btn_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_gravity="right"
+        android:background="@drawable/round_button"
+        android:visibility="gone"
+        android:gravity="center"/>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <!--<Spinner
+            android:id="@+id/dropdown_operator_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            style="@style/android:TextAppearance.Widget.TextView.SpinnerItem"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown" />-->
+
+        <Spinner
+            style="@style/Widget.AppCompat.Spinner"
+            android:id="@+id/dropdown_operator_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:background="@drawable/spinner_bg"
+            android:popupBackground="@android:color/white"
+            android:stateListAnimator="@drawable/spinner_sla"
+            android:popupElevation="3dp" />
+
+
+        <!--<android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@drawable/ic_action_name"
+            android:layout_gravity="center|right|end" />-->
+        <!--<Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_action_name"/>-->
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/btn_contact_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@null"
+            android:src="@drawable/ic_action_name"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tv_operator_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1"/>
+
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/btn_change_operator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right"
+                android:layout_marginTop="-8dp"
+                android:background="@null"
+                android:src="@drawable/ico_sim">
+            </android.support.v7.widget.AppCompatImageButton>
+
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_send_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@mipmap/send"
+            android:layout_margin="4dp"
+            android:layout_gravity="center|right|end" />
+
+    </LinearLayout>
+
+</LinearLayout>

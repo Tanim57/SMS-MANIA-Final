@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SMS Mania</string>
+    <!-- Custom font support -->
+    <string name="default_font_bn">solaiman_lipi.ttf</string>
+    <string name="default_font_bold_bn">solaiman_lipi_bold.ttf</string>
+    <string name="solaiman_lipi">solaiman_lipi.ttf</string>
+    <string name="solaiman_lipi_bold">solaiman_lipi_bold.ttf</string>
+    <string name="kalpurush">kalpurush.ttf</string>
+    <string name="adorsho_lipi">adorsho_lipi.ttf</string>
+</resources>
