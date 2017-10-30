@@ -31,8 +31,9 @@ public class Global {
     public static boolean blallMarked = false;
     public static boolean teletalkallMarked = false;
     public static boolean airtelallMarked = false;
-    public static String[] OperatorList = new String[]{"All Contact", "All GP", "All Robi","All Airtel","All Teletalk","All Banglalink"};
-
+    public static String[] OperatorList = new String[]{"All Contact", "All GP", "All Robi","All Airtel",
+            "All Teletalk","All Banglalink","Custom Contact List"};
     public static int NUMBER_OF_OPERATORS=0;
     public static int CURRENT_OPERATOR=0;
+
 }

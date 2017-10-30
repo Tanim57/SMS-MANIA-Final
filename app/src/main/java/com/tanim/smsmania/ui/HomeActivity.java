@@ -11,6 +11,7 @@ import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.tanim.smsmania.Common.Global;
 import com.tanim.smsmania.R;
 import com.tanim.smsmania.interfaces.ReadContactListener;
+import com.tanim.smsmania.model.Contact;
 import com.tanim.smsmania.model.MobileOperator;
 import com.tanim.smsmania.tasks.ReadContactsTasks;
 
@@ -114,6 +116,52 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
                 }
             }
         });
+
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(position<=5)
+                {
+                    ArrayList<Contact> selectedDataSource = getDataSource(position);
+                }
+                else{
+
+                }
+
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+
+            }
+
+        });
+    }
+
+    private ArrayList<Contact> getDataSource(int position) {
+        if(position==0)
+        {
+            return Global.ALL_CONTACTS;
+        }
+        else if(position==1)
+        {
+            return Global.GP_ALL_CONTACTS;
+        }
+        else if(position==2)
+        {
+            return Global.ROBI_ALL_CONTACTS;
+        }
+        else if(position==3){
+            return Global.AIRTEL_ALL_CONTACTS;
+        }
+        else if(position==4)
+        {
+            return Global.TELETALK_ALL_CONTACTS;
+        }
+        else
+        {
+            return Global.BL_ALL_CONTACTS;
+        }
     }
 
     private void initView() {

@@ -1,7 +1,9 @@
 package com.tanim.smsmania.ui;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -132,6 +134,18 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
 
     }
 
+    public int getSelectedContact() {
+        int count =0;
+        for(boolean b:Global.isMarked)
+        {
+            if(b)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
@@ -185,15 +199,8 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                // use this method for auto complete search process
                 perFormFilter(newText);
                 SearchViewText = newText;
-                /*perFormFilter(Global.allContactAdapter,newText,Global.ALL_CONTACTS);
-                perFormFilter(Global.gpAllContactAdapter,newText,Global.GP_ALL_CONTACTS);
-                perFormFilter(Global.robiAllContactAdapter,newText,Global.ROBI_ALL_CONTACTS);
-                perFormFilter(Global.teletalkAllContactAdapter,newText,Global.TELETALK_ALL_CONTACTS);
-                perFormFilter(Global.airtelAllContactAdapter,newText,Global.AIRTEL_ALL_CONTACTS);
-                perFormFilter(Global.blAllContactAdapter,newText,Global.BL_ALL_CONTACTS);*/
                 return true;
             }
         });
@@ -296,5 +303,25 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
                 view.setAlpha(0);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        int totalContactSelected =getSelectedContact();
+        builder.setMessage("Total Selected Contact : "+totalContactSelected)
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }
