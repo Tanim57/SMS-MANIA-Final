@@ -2,11 +2,15 @@ package com.tanim.smsmania.ui;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.util.Log;
@@ -16,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements ReadContactListener {
+    public static String BROADCAST_CUSTOM_SELECT_CONTACT="BROADCAST CUSTOM SELECT CONTACT";
     private ImageButton btnShowContact;
     private ImageButton btnChangeOperator;
     private FloatingActionButton btnSendMessage;
@@ -44,6 +50,7 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
     private SubscriptionManager subscriptionManager;
     private List<SubscriptionInfo> activeSubscriptionInfoList;
     private MobileOperator currentOperator;
+    ArrayList<Contact> selectedDataSource;
 
 
     @SuppressLint("NewApi")
@@ -60,8 +67,16 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
     protected void onResume() {
         CheckOperatorStatus();
         super.onResume();
+        registerReceiver(broadcastReceiver, new IntentFilter(BROADCAST_CUSTOM_SELECT_CONTACT));
     }
 
+    @Override
+    protected void onPause() {
+        unregisterReceiver(broadcastReceiver);
+        super.onPause();
+    }
+
+    @SuppressLint("NewApi")
     private void initEvent() {
         btnShowContact.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +85,7 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
                 if (isContactLoadComplete) {
                     //Intent intent = new Intent(HomeActivity.this,TestClass.class);
                     Intent intent = new Intent(HomeActivity.this, SelectContactActivity.class);
+                    SelectContactActivity.mContext = HomeActivity.this;
                     startActivity(intent);
                 } else {
                     Toast.makeText(getApplicationContext(), "Please wait, Contact Loading", Toast.LENGTH_SHORT).show();
@@ -98,6 +114,7 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
                 tvOperatorId.setText(currentOperator.getSubscriptionId()+"");
             }
         });
+
         btnSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,9 +123,17 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
                     Toast.makeText(getApplicationContext(),"No Operator Found",Toast.LENGTH_SHORT).show();
                 }
                 else {
+
                     if(isContactLoadComplete)
                     {
                         Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_SHORT).show();
+                        SmsManager smsManager = SmsManager.getSmsManagerForSubscriptionId(currentOperator.getSubscriptionId());
+                        for(Contact contact:selectedDataSource)
+                        {
+                            Log.d("Check",contact.name+" "+contact.number);
+                        }
+                        //smsManager.sendTextMessage("", "Tanim", "Send SMS successfull", null, null);
+
                     }
                     else {
                         Toast.makeText(getApplicationContext(), "Please wait, Contact Loading", Toast.LENGTH_SHORT).show();
@@ -117,12 +142,17 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
             }
         });
 
+
         dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if(position<=5)
                 {
-                    ArrayList<Contact> selectedDataSource = getDataSource(position);
+                    if(isContactLoadComplete)
+                    {
+                        selectedDataSource = getDataSource(position);
+                    }
                 }
                 else{
 
@@ -139,28 +169,13 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
     }
 
     private ArrayList<Contact> getDataSource(int position) {
-        if(position==0)
-        {
-            return Global.ALL_CONTACTS;
-        }
-        else if(position==1)
-        {
-            return Global.GP_ALL_CONTACTS;
-        }
-        else if(position==2)
-        {
-            return Global.ROBI_ALL_CONTACTS;
-        }
-        else if(position==3){
-            return Global.AIRTEL_ALL_CONTACTS;
-        }
-        else if(position==4)
-        {
-            return Global.TELETALK_ALL_CONTACTS;
-        }
-        else
-        {
-            return Global.BL_ALL_CONTACTS;
+        switch(position){
+            case 0: return Global.ALL_CONTACTS;
+            case 1: return Global.GP_ALL_CONTACTS;
+            case 2: return Global.ROBI_ALL_CONTACTS;
+            case 3: return Global.AIRTEL_ALL_CONTACTS;
+            case 4: return Global.TELETALK_ALL_CONTACTS;
+            default: return Global.BL_ALL_CONTACTS;
         }
     }
 
@@ -296,7 +311,10 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
     public void onReadContactsCompleteResponse(boolean isContactLoadComplete) {
         this.isContactLoadComplete = isContactLoadComplete;
         if(isContactLoadComplete)
+        {
+            selectedDataSource = Global.ALL_CONTACTS;
             Toast.makeText(getApplicationContext(),"Contact Load Complete",Toast.LENGTH_LONG).show();
+        }
         else {
             Toast.makeText(getApplicationContext(),"Failed to Load Contact",Toast.LENGTH_LONG).show();
         }
@@ -309,4 +327,11 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
             mProgressBar.dismiss();
         }
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("Check",intent.getStringExtra("Check"));
+        }
+    };
 }

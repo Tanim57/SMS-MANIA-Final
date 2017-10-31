@@ -48,7 +48,7 @@ import android.widget.Toast;
  */
 
 public class SelectContactActivity extends AppCompatActivity implements CommunicationFragmentsListener {
-
+    public static Context mContext;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -62,21 +62,17 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
     private ViewPagerAdapter adapter;
     private FragmentInterface fragmentInterface;
     private String SearchViewText = "";
-
     int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_contact);
-
         intView();
         setupViewPager(viewPager);
         //setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     private void intView() {
@@ -313,6 +309,10 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
+                        Intent intent = new Intent(HomeActivity.BROADCAST_CUSTOM_SELECT_CONTACT);
+                        intent.putExtra("Check","Message");
+                        mContext.sendBroadcast(intent);
                         finish();
                     }
                 })
