@@ -13,10 +13,13 @@ import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -34,6 +37,8 @@ import com.tanim.smsmania.tasks.ReadContactsTasks;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.microedition.khronos.opengles.GL;
+
 public class HomeActivity extends AppCompatActivity implements ReadContactListener {
     public static String BROADCAST_CUSTOM_SELECT_CONTACT="BROADCAST CUSTOM SELECT CONTACT";
     private ImageButton btnShowContact;
@@ -41,6 +46,9 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
     private FloatingActionButton btnSendMessage;
     private TextView tvOperatorId;
     private ProgressDialog mProgressBar;
+    private EditText etMessage;
+    private TextView tvMessageSize;
+    private TextView tvContactSize;
     private ListView contactList;
     private ReadContactsTasks mReadContactsTasks;
     private Spinner dropdown;
@@ -65,6 +73,11 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
 
     @Override
     protected void onResume() {
+        if(Global.isCustomContactedSelected)
+        {
+            dropdown.setSelection(6);
+            Global.isCustomContactedSelected = false;
+        }
         CheckOperatorStatus();
         super.onResume();
         registerReceiver(broadcastReceiver, new IntentFilter(BROADCAST_CUSTOM_SELECT_CONTACT));
@@ -90,9 +103,9 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
                 } else {
                     Toast.makeText(getApplicationContext(), "Please wait, Contact Loading", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
+
         btnChangeOperator.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,6 +179,22 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
             }
 
         });
+        etMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.d("Check",s.toString().length()+"");
+            }
+        });
     }
 
     private ArrayList<Contact> getDataSource(int position) {
@@ -183,6 +212,9 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
         btnShowContact = (ImageButton) findViewById(R.id.btn_contact_list);
         btnChangeOperator =(ImageButton) findViewById(R.id.btn_change_operator);
         tvOperatorId = (TextView) findViewById(R.id.tv_operator_id);
+        tvContactSize = (TextView) findViewById(R.id.contact_size);
+        tvMessageSize = (TextView) findViewById(R.id.message_size);
+        etMessage = (EditText) findViewById(R.id.et_message);
         btnSendMessage = (FloatingActionButton) findViewById(R.id.btn_send_message);
         mProgressBar = new ProgressDialog(this);
         mProgressBar.setCancelable(false);
@@ -233,7 +265,7 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
                 tvOperatorId.setVisibility(View.VISIBLE);
             }
         }
-        catch (SecurityException e)
+        catch (Exception e)
         {
             Toast.makeText(getApplicationContext(),"This Device has no Permission",Toast.LENGTH_LONG).show();
             btnSendMessage.setEnabled(false);

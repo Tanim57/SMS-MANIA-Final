@@ -35,5 +35,5 @@ public class Global {
             "All Teletalk","All Banglalink","Custom Contact List"};
     public static int NUMBER_OF_OPERATORS=0;
     public static int CURRENT_OPERATOR=0;
-
+    public static boolean isCustomContactedSelected = false;
 }

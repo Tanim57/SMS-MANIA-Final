@@ -7,6 +7,7 @@
     tools:context="com.tanim.smsmania.ui.HomeActivity"
     android:orientation="vertical">
     <EditText
+        android:id="@+id/et_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -27,11 +28,32 @@
         android:background="@drawable/round_button"
         android:visibility="gone"
         android:gravity="center"/>-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_alignParentLeft="true"
+            android:id="@+id/contact_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selected Contacts: 10"
+            android:layout_marginLeft="10dp"/>
+        <TextView
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:id="@+id/message_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="160/1"/>
+    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:gravity="right"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:orientation="horizontal">
 
         <!--<Spinner
@@ -51,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:layout_margin="8dp"
+            android:layout_marginRight="8dp"
             android:background="@drawable/spinner_bg"
             android:popupBackground="@android:color/white"
             android:stateListAnimator="@drawable/spinner_sla"

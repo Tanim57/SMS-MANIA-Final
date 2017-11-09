@@ -305,20 +305,18 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int totalContactSelected =getSelectedContact();
-        builder.setMessage("Total Selected Contact : "+totalContactSelected)
-                .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setMessage("Total Selected Contact : "+ totalContactSelected)
+                .setCancelable(true)
+                .setPositiveButton("SAVE", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
-                        Intent intent = new Intent(HomeActivity.BROADCAST_CUSTOM_SELECT_CONTACT);
-                        intent.putExtra("Check","Message");
-                        mContext.sendBroadcast(intent);
+                        Global.isCustomContactedSelected = true;
                         finish();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("DISCARD", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
+                        Global.isCustomContactedSelected = false;
+                        finish();
                     }
                 });
         AlertDialog alert = builder.create();
