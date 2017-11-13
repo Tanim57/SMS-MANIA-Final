@@ -5,8 +5,13 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,6 +37,7 @@ import com.tanim.smsmania.fragments.GrameenPhoneFragment;
 import com.tanim.smsmania.fragments.RobiFragment;
 import com.tanim.smsmania.fragments.TeletalkFragment;
 import com.tanim.smsmania.interfaces.CommunicationFragmentsListener;
+import com.tanim.smsmania.interfaces.CountCustomContactListener;
 import com.tanim.smsmania.interfaces.FragmentInterface;
 import com.tanim.smsmania.model.Contact;
 import com.tanim.smsmania.tasks.NotifyFragmentsTasks;
@@ -43,11 +49,13 @@ import java.util.List;
 import android.view.View;
 import android.widget.Toast;
 
+import static android.graphics.Paint.ANTI_ALIAS_FLAG;
+
 /**
  * Created by Tanim on 10/24/2017.
  */
 
-public class SelectContactActivity extends AppCompatActivity implements CommunicationFragmentsListener {
+public class SelectContactActivity extends AppCompatActivity implements CountCustomContactListener {
     public static Context mContext;
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -62,6 +70,7 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
     private ViewPagerAdapter adapter;
     private FragmentInterface fragmentInterface;
     private String SearchViewText = "";
+    private FloatingActionButton btnSend,btnMessage,btnShowContact;
     int i = 0;
 
     @Override
@@ -69,26 +78,62 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_contact);
         intView();
+        initEvent();
         setupViewPager(viewPager);
         //setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         tabLayout.setupWithViewPager(viewPager);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        changeContact();
+    }
+
     private void intView() {
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        allFragment = new AllFragment();
-        grameenPhoneFragment = new GrameenPhoneFragment();
-        robiFragment = new RobiFragment();
-        banglaLinkFragment = new BanglaLinkFragment();
-        teletalkFragment = new TeletalkFragment();
-        airTelFragment = new AirTelFragment();
+        btnShowContact = (FloatingActionButton) findViewById(R.id.floating_select_contact);
+        btnMessage = (FloatingActionButton) findViewById(R.id.floating_btn_message);
+        btnSend = (FloatingActionButton) findViewById(R.id.floating_btn_send);
+        allFragment = new AllFragment(SelectContactActivity.this,this);
+        grameenPhoneFragment = new GrameenPhoneFragment(SelectContactActivity.this,this);
+        robiFragment = new RobiFragment(SelectContactActivity.this,this);
+        banglaLinkFragment = new BanglaLinkFragment(SelectContactActivity.this,this);
+        teletalkFragment = new TeletalkFragment(SelectContactActivity.this,this);
+        airTelFragment = new AirTelFragment(SelectContactActivity.this,this);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         //viewPager.setOffscreenPageLimit(0);
         viewPager.setPageTransformer(true,new ZoomOutPageTransformer());
         fragmentInterface = allFragment;
 
+
+
+    }
+    private void initEvent() {
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (Contact contact:Global.ALL_CONTACTS)
+                {
+                    if(contact.isSelected)
+                    {
+                        Log.d("Check",contact.name+" "+contact.number);
+                    }
+                }
+                if(Global.customSelectContact<=0)
+                {
+                    Toast.makeText(getApplicationContext(),"No Contact Selected",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        btnMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAlertDialog();
+            }
+        });
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -111,6 +156,7 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
 
             }
         });
+
     }
 
 
@@ -124,13 +170,7 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
         viewPager.setAdapter(adapter);
     }
 
-    @Override
-    public void sendMessage(boolean marked) {
-
-
-    }
-
-    public int getSelectedContact() {
+    public int getSelectedContact(){
         int count =0;
         for(boolean b:Global.isMarked)
         {
@@ -140,6 +180,11 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
             }
         }
         return count;
+    }
+
+    @Override
+    public void changeContact() {
+        btnShowContact.setImageBitmap(textAsBitmap(Global.customSelectContact+"", 40, Color.WHITE));
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -228,6 +273,8 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
                         fragmentInterface.getAdapter().getFilter().filter(SearchViewText);
                     }
                 }
+                Global.customSelectContact = getSelectedContact();
+                changeContact();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -303,6 +350,11 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
 
     @Override
     public void onBackPressed() {
+        showAlertDialog();
+    }
+
+    private void showAlertDialog()
+    {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int totalContactSelected =getSelectedContact();
         builder.setMessage("Total Selected Contact : "+ totalContactSelected)
@@ -316,10 +368,28 @@ public class SelectContactActivity extends AppCompatActivity implements Communic
                 .setNegativeButton("DISCARD", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Global.isCustomContactedSelected = false;
+                        Global.customSelectContact = 0;
+                        Arrays.fill(Global.isMarked,false);
+                        allFragment.getAdapter().selectAll(Global.ALL_CONTACTS,false);
                         finish();
                     }
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
+        Paint paint = new Paint(ANTI_ALIAS_FLAG);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        paint.setTextAlign(Paint.Align.LEFT);
+        float baseline = -paint.ascent(); // ascent() is negative
+        int width = (int) (paint.measureText(text) + 0.0f); // round
+        int height = (int) (baseline + paint.descent() + 0.0f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(image);
+        canvas.drawText(text, 0, baseline, paint);
+        return image;
     }
 }

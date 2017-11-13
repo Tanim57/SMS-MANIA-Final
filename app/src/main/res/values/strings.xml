@@ -7,4 +7,5 @@
     <string name="solaiman_lipi_bold">solaiman_lipi_bold.ttf</string>
     <string name="kalpurush">kalpurush.ttf</string>
     <string name="adorsho_lipi">adorsho_lipi.ttf</string>
+    <string name="selected_contact">Selected Contacts : </string>
 </resources>

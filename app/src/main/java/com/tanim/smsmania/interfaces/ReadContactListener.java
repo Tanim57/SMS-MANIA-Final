@@ -9,7 +9,5 @@ import java.util.ArrayList;
  */
 
 public interface ReadContactListener {
-    void onPreExecute();
     void onReadContactsCompleteResponse(boolean isContactLoadComplete);
-    void onPostExecute();
 }

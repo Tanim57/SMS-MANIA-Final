@@ -17,4 +17,5 @@
     <color name="colorPrimaryLight">#CFD8DC</color>
     <color name="colorLabelText">#ACACAC</color>
     <color name="colorLightGrey">#CFD8DC</color>
+    <color name="colorBlue">#1E88E5</color>
 </resources>

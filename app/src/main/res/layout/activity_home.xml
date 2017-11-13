@@ -37,7 +37,7 @@
             android:id="@+id/contact_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Selected Contacts: 10"
+            android:text="Selected Contacts: 0"
             android:layout_marginLeft="10dp"/>
         <TextView
             android:layout_alignParentRight="true"
@@ -129,9 +129,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:src="@mipmap/send"
+            android:src="@mipmap/ico_send1"
             android:layout_margin="4dp"
-            android:layout_gravity="center|right|end" />
+            android:layout_gravity="center|right|end"
+            app:backgroundTint="@color/colorBlue"/>
 
     </LinearLayout>
 

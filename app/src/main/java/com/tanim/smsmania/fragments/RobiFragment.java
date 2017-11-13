@@ -1,5 +1,7 @@
 package com.tanim.smsmania.fragments;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +13,7 @@ import android.widget.ListView;
 
 import com.tanim.smsmania.Common.Global;
 import com.tanim.smsmania.R;
+import com.tanim.smsmania.interfaces.CountCustomContactListener;
 import com.tanim.smsmania.interfaces.FragmentInterface;
 import com.tanim.smsmania.model.Contact;
 import com.tanim.smsmania.ui.AllContactAdapter;
@@ -23,13 +26,17 @@ import java.util.ArrayList;
  * Created by Tanim on 10/24/2017.
  */
 
+@SuppressLint("ValidFragment")
 public class RobiFragment extends Fragment implements FragmentInterface {
     ListView lvAllList;
     private AllContactAdapter adapter;
     private RecyclerView mRecyclerView;
     private ContactAdapter mAdapter;
-    public RobiFragment() {
-        // Required empty public constructor
+    private Context mContext;
+    private CountCustomContactListener mDelegate;
+    public RobiFragment(Context mContext, CountCustomContactListener mDelegate) {
+        this.mContext = mContext;
+        this.mDelegate = mDelegate;
     }
 
     @Override
@@ -46,12 +53,12 @@ public class RobiFragment extends Fragment implements FragmentInterface {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_robi_contact);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext));
 
-        mAdapter = new ContactAdapter(getContext(),Global.ROBI_ALL_CONTACTS);
+        mAdapter = new ContactAdapter(mContext,Global.ROBI_ALL_CONTACTS,mDelegate);
         //mAdapter.setContactList(Global.ROBI_ALL_CONTACTS);
         //mAdapter.setContactList(Global.ROBI_ALL_CONTACTS);
         mRecyclerView.setAdapter(mAdapter);

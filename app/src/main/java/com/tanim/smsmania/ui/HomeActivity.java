@@ -1,5 +1,6 @@
 package com.tanim.smsmania.ui;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import com.tanim.smsmania.Common.Global;
 import com.tanim.smsmania.R;
 import com.tanim.smsmania.interfaces.ReadContactListener;
+import com.tanim.smsmania.interfaces.SmsSendListener;
 import com.tanim.smsmania.model.Contact;
 import com.tanim.smsmania.model.MobileOperator;
 import com.tanim.smsmania.tasks.ReadContactsTasks;
@@ -58,8 +60,8 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
     private SubscriptionManager subscriptionManager;
     private List<SubscriptionInfo> activeSubscriptionInfoList;
     private MobileOperator currentOperator;
+    private int dropdownPosition = 0;
     ArrayList<Contact> selectedDataSource;
-
 
     @SuppressLint("NewApi")
     @Override
@@ -75,7 +77,18 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
     protected void onResume() {
         if(Global.isCustomContactedSelected)
         {
-            dropdown.setSelection(6);
+            dropdownPosition = 6;
+            dropdown.setSelection(dropdownPosition);
+            tvContactSize.setText((getString(R.string.selected_contact)+" "+Global.customSelectContact));
+            Global.isCustomContactedSelected = false;
+        }
+        else {
+            dropdownPosition = 0;
+            dropdown.setSelection(dropdownPosition);
+            if(Global.ALL_CONTACTS!=null)
+            {
+                tvContactSize.setText((getString(R.string.selected_contact)+" "+Global.ALL_CONTACTS.size()));
+            }
             Global.isCustomContactedSelected = false;
         }
         CheckOperatorStatus();
@@ -139,13 +152,34 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
 
                     if(isContactLoadComplete)
                     {
-                        Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_SHORT).show();
-                        SmsManager smsManager = SmsManager.getSmsManagerForSubscriptionId(currentOperator.getSubscriptionId());
-                        for(Contact contact:selectedDataSource)
+                        if(dropdownPosition<6)
                         {
-                            Log.d("Check",contact.name+" "+contact.number);
+
+                            Toast.makeText(getApplicationContext(), "Send", Toast.LENGTH_SHORT).show();
+                            SmsManager smsManager = SmsManager.getSmsManagerForSubscriptionId(currentOperator.getSubscriptionId());
+                            for(Contact contact:selectedDataSource)
+                            {
+                                Log.d("Check",contact.name+" "+contact.number);
+                                //smsManager.sendTextMessage(contact.number,null,etMessage.getText().toString(),null,null);
+                                //smsManager.sendTextMessage("", "Tanim", "S", null, null);
+                            }
+                            //smsManager.sendTextMessage("01521455796",null,etMessage.getText().toString(),null,null);
                         }
-                        //smsManager.sendTextMessage("", "Tanim", "Send SMS successfull", null, null);
+                        else
+                        {
+                            for (Contact contact:Global.ALL_CONTACTS)
+                            {
+                                if(contact.isSelected)
+                                {
+                                    Log.d("Check",contact.name+" "+contact.number);
+                                    //smsManager.sendTextMessage(contact.number,null,etMessage.getText().toString(),null,null);
+                                }
+                            }
+                            if(Global.customSelectContact<=0)
+                            {
+                                Toast.makeText(getApplicationContext(),"No Contact Selected",Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
                     }
                     else {
@@ -160,18 +194,19 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
 
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                dropdownPosition = position;
                 if(position<=5)
                 {
                     if(isContactLoadComplete)
                     {
                         selectedDataSource = getDataSource(position);
+                        tvContactSize.setText(getString(R.string.selected_contact)+" "+selectedDataSource.size());
                     }
                 }
                 else{
-
+                    selectedDataSource = null;
+                    tvContactSize.setText(getString(R.string.selected_contact)+" "+Global.customSelectContact);
                 }
-
-
             }
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -184,15 +219,55 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
             }
-
             @Override
             public void afterTextChanged(Editable s) {
-                Log.d("Check",s.toString().length()+"");
+                //StringEscapeUtils.escapeJava(s.toString());
+                int textSize = s.toString().length();
+                if(s.toString().length() == StringEscapeUtils.escapeJava(s.toString()).length())
+                {
+                    int currentSize=160;
+                    if(textSize<=160)
+                    {
+                        tvMessageSize.setText((160-textSize)+"/1");
+                    }
+                    else if(textSize<=160+146)
+                    {
+                        tvMessageSize.setText((160+146-textSize)+"/2");
+                    }
+                    else if(textSize<=160+146+153){
+                        tvMessageSize.setText((160+146+153-textSize)+"/3");
+                    }
+                    else
+                    {
+                        tvMessageSize.setText("1KB");
+                        Toast.makeText(getApplicationContext(),"Message too Large",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else {
+                    if(textSize<=70)
+                    {
+                        tvMessageSize.setText((70-textSize)+"/1");
+                    }
+                    else if(textSize<=70+64)
+                    {
+                        tvMessageSize.setText((70+64-textSize)+"/2");
+                    }
+                    else if(textSize<=70+64+67){
+                        tvMessageSize.setText((70+64+67-textSize)+"/3");
+                    }
+                    else
+                    {
+                        tvMessageSize.setText("1KB");
+                        Toast.makeText(getApplicationContext(),"Message too Large",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                /*
+                int numberOfSMS = (int) Math.ceil((double) textSize/Global.oneSMSLength);
+                tvMessageSize.setText(currentSize+"/"+numberOfSMS);*/
             }
         });
     }
@@ -334,29 +409,26 @@ public class HomeActivity extends AppCompatActivity implements ReadContactListen
 
 
 
-    @Override
+    /*@Override
     public void onPreExecute() {
         mProgressBar.show();
-    }
+    }*/
 
     @Override
     public void onReadContactsCompleteResponse(boolean isContactLoadComplete) {
         this.isContactLoadComplete = isContactLoadComplete;
         if(isContactLoadComplete)
         {
-            selectedDataSource = Global.ALL_CONTACTS;
+            if(dropdownPosition<=5)
+            {
+                tvContactSize.setVisibility(View.VISIBLE);
+                selectedDataSource = getDataSource(dropdownPosition);
+                tvContactSize.setText(getString(R.string.selected_contact)+" "+selectedDataSource.size());
+            }
             Toast.makeText(getApplicationContext(),"Contact Load Complete",Toast.LENGTH_LONG).show();
         }
-        else {
+        else{
             Toast.makeText(getApplicationContext(),"Failed to Load Contact",Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onPostExecute() {
-        if (mProgressBar!=null)
-        {
-            mProgressBar.dismiss();
         }
     }
 

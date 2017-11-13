@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.tanim.smsmania.Common.Global;
 import com.tanim.smsmania.R;
+import com.tanim.smsmania.interfaces.CountCustomContactListener;
 import com.tanim.smsmania.model.Contact;
 
 import java.util.ArrayList;
@@ -31,13 +32,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Holder> 
     private Context mContext;
     private ArrayList<Contact> mContacts,mOriginalValues;
     private boolean[] itemChecked;
+    private CountCustomContactListener mDelegate;
 
-    public ContactAdapter(Context context,ArrayList<Contact> arrayList){
+    public ContactAdapter(Context context,ArrayList<Contact> arrayList,CountCustomContactListener mDelegate){
         mContext = context;
         mContacts = arrayList;
         mOriginalValues = arrayList;
+        this.mDelegate = mDelegate;
         itemChecked = new boolean[arrayList.size()];
-
     }
 
     public void setContactList(ArrayList<Contact> arrayList){
@@ -69,11 +71,15 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Holder> 
         {
             return;
         }
-        for(Contact contact:arrayList)
-        {
+        for(Contact contact:arrayList) {
             Global.isMarked[contact.id] = mark;
             contact.isSelected = mark;
         }
+        /*if(Global.markEdIds!=null)
+        {
+            Global.markEdIds.clear();
+            Global.markEdIds = null;
+        }*/
         notifyDataSetChanged();
     }
 
@@ -88,7 +94,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Holder> 
         if (holder != null){
             final Contact contact = mContacts.get(position);
 
-            holder.tvName.setText(contact.id+" "+contact.name);
+            holder.tvName.setText(contact.name);
             holder.tvNumber.setText(contact.number);
 
 
@@ -116,6 +122,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Holder> 
                         Global.isMarked[contact.id] = false;
                         Global.markEdIds.add(contact.id);
                     }
+                    if(contact.isSelected)
+                    {
+                        Global.customSelectContact++;
+                        mDelegate.changeContact();
+                    }
+                    else
+                    {
+                        Global.customSelectContact--;
+                        mDelegate.changeContact();
+                    }
                 }
             });
             holder.checkContact.setChecked(contact.isSelected);
@@ -127,6 +143,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.Holder> 
                     holder.checkContact.setChecked(contact.isSelected);
                     Global.isMarked[contact.id] = contact.isSelected;
                     Global.markEdIds.add(contact.id);
+                    if(contact.isSelected)
+                    {
+                        Global.customSelectContact++;
+                        mDelegate.changeContact();
+                    }
+                    else
+                    {
+                        Global.customSelectContact--;
+                        mDelegate.changeContact();
+                    }
                 }
             };
 

@@ -39,14 +39,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/default_margin"
-        android:src="@mipmap/send" />
+        android:src="@mipmap/ico_send1"
+        app:backgroundTint="@color/colorBlue"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_invisible"
-        android:layout_width="@dimen/default_margin"
-        android:layout_height="@dimen/default_margin"
+        android:layout_width="@dimen/margin_8dp"
+        android:layout_height="@dimen/margin_8dp"
         android:layout_gravity="top|end"
-        android:layout_margin="@dimen/default_margin"
+        android:layout_margin="@dimen/margin_8dp"
         android:visibility="invisible"
         app:layout_anchor="@id/floating_btn_send"
         app:layout_anchorGravity="top" />
@@ -57,9 +58,31 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:layout_margin="@dimen/default_margin"
-        android:src="@drawable/ico_message"
+        android:src="@mipmap/ico_message1"
         app:layout_anchor="@id/fab_invisible"
+        app:backgroundTint="@color/colorBlue"
         app:layout_anchorGravity="top" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_invisible1"
+        android:layout_width="@dimen/margin_8dp"
+        android:layout_height="@dimen/margin_8dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="@dimen/margin_8dp"
+        android:visibility="invisible"
+        app:layout_anchor="@id/floating_btn_message"
+        app:layout_anchorGravity="top" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floating_select_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="@dimen/default_margin"
+        app:layout_anchor="@id/fab_invisible1"
+        app:layout_anchorGravity="top"
+        app:backgroundTint="@color/colorBlue"/>
+
+
 
     <!--<android.support.design.widget.FloatingActionButton
         android:id="@+id/fabBottom"
